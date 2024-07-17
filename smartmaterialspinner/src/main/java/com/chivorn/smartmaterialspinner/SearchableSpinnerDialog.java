@@ -9,6 +9,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
@@ -203,7 +204,7 @@ public class SearchableSpinnerDialog<T> extends DialogFragment implements Search
                     View listView = super.getView(position, convertView, parent);
                     tvListItem = (TextView) listView;
                     tvListItem.setTypeface(typeface);
-                    SpannableString spannableString = new SpannableString(tvListItem.getText());
+
                     if (searchListItemBackgroundColor != 0) {
                         itemListContainer.setBackgroundColor(searchListItemBackgroundColor);
                     } else if (searchListItemBackgroundDrawable != null) {
@@ -212,15 +213,17 @@ public class SearchableSpinnerDialog<T> extends DialogFragment implements Search
                         }
                     }
 
-                    if (searchListItemColor != 0) {
-                        tvListItem.setTextColor(searchListItemColor);
-                        if (searchFilterColor != 0 && searchView.getQuery() != null && !searchView.getQuery().toString().isEmpty()) {
-                            String query = StringUtils.removeDiacriticalMarks(searchView.getQuery().toString()).toLowerCase(Locale.getDefault());
-                            String fullText = StringUtils.removeDiacriticalMarks(tvListItem.getText().toString()).toLowerCase(Locale.getDefault());
-                            int start = fullText.indexOf(query);
+                    if (searchFilterColor != 0 && searchView.getQuery() != null && !searchView.getQuery().toString().isEmpty()) {
+                        String query = StringUtils.removeDiacriticalMarks(searchView.getQuery().toString()).toLowerCase(Locale.getDefault());
+                        String fullText = StringUtils.removeDiacriticalMarks(tvListItem.getText().toString()).toLowerCase(Locale.getDefault());
+                        int start = fullText.indexOf(query);
+                        if (start >= 0) {
                             int end = start + query.length();
-                            spannableString.setSpan(new ForegroundColorSpan(searchFilterColor), start, end, 0);
-                            tvListItem.setText(spannableString, TextView.BufferType.SPANNABLE);
+                            if (end <= fullText.length()) {
+                                SpannableString spannableString = new SpannableString(tvListItem.getText());
+                                spannableString.setSpan(new ForegroundColorSpan(searchFilterColor), start, end, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                                tvListItem.setText(spannableString, TextView.BufferType.SPANNABLE);
+                            }
                         }
                     }
 

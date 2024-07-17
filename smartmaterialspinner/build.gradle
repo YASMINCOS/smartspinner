@@ -1,40 +1,17 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
-}
-
-ext {
-    // Library
-    LIBRARY_NAME = 'SmartMaterialSpinner'
-    PUBLISH_GROUP_ID = 'com.github.chivorns'
-    PUBLISH_ARTIFACT_ID = LIBRARY_NAME.toLowerCase()
-    PUBLISH_VERSION = '2.0.0'
-    PUBLISH_DESCRIPTION = "Provide with more customization for your spinner."
-
-    // Github
-    GIT_REPO_URL = 'https://github.com/Chivorns/SmartMaterialSpinner'
-    GIT_VCS_URL = GIT_REPO_URL + '.git'
-    GIT_USER_REPO_NAME = 'Chivorns/SmartMaterialSpinner'
-
-    // Developer Info
-    DEVELOPER_ID = 'chivorns'
-    DEVELOPER_NAME = 'Chivorn'
-    DEVELOPER_EMAIL = 'chivorn@live.com'
-
-    // Licence
-    LICENSE_NAME = 'The Apache Software License, Version 2.0'
-    LICENSE_URL = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-    ALL_LICENSES = ["Apache-2.0"]
+    id 'maven-publish'
 }
 
 android {
-    namespace 'com.chivorn.smartmaterialspinner'
     compileSdk 34
+
     defaultConfig {
         minSdk 14
         targetSdk 34
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        namespace 'com.chivorn.smartmaterialspinner'
     }
 
     buildTypes {
@@ -44,7 +21,7 @@ android {
         }
     }
 
-    lint {
+    lintOptions {
         abortOnError false
     }
 }
@@ -57,4 +34,56 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }
 
-apply from: "${rootProject.projectDir}/scripts/publish-module.gradle"
+def PUBLISH_GROUP_ID = 'com.github.YASMINCOS'
+def PUBLISH_ARTIFACT_ID = 'smartspinner'
+def PUBLISH_VERSION = '2.0.1'
+def PUBLISH_DESCRIPTION = "Provide with more customization for your spinner."
+def GIT_REPO_URL = 'https://github.com/YASMINCOS/smartmaterialspinner'
+def DEVELOPER_NAME = 'YASMINCOS'
+def DEVELOPER_EMAIL = 'costayasmin367@gmail.com'
+def LICENSE_NAME = 'The Apache Software License, Version 2.0'
+def LICENSE_URL = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+
+publishing {
+    publications {
+        // Configuração da publicação do Maven
+        maven(MavenPublication) {
+            // Configuração dos artefatos a serem publicados
+            groupId PUBLISH_GROUP_ID
+            artifactId PUBLISH_ARTIFACT_ID
+            version PUBLISH_VERSION
+
+            // Configurações adicionais do POM
+            pom {
+                name = PUBLISH_ARTIFACT_ID
+                description = PUBLISH_DESCRIPTION
+                url = GIT_REPO_URL
+
+                licenses {
+                    license {
+                        name = LICENSE_NAME
+                        url = LICENSE_URL
+                    }
+                }
+
+                developers {
+                    developer {
+                        name = DEVELOPER_NAME
+                        email = DEVELOPER_EMAIL
+                    }
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/YASMINCOS/smartspinner")
+            credentials {
+                username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.token") ?: System.getenv("TOKEN")
+            }
+        }
+    }
+}

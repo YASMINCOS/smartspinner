@@ -5,23 +5,17 @@ plugins {
     id 'io.github.gradle-nexus.publish-plugin' version '2.0.0-rc-1'
 }
 
-apply from: "${rootDir}/scripts/publish-root.gradle"
-
 allprojects {
-    tasks.withType(Javadoc).tap {
-        configureEach {
-            options.addStringOption('Xdoclint:none', '-quiet')
-            options.addStringOption('encoding', 'UTF-8')
-            options.addBooleanOption('Xdoclint:none', true)
-        }
+    tasks.withType(Javadoc).configureEach {
+        options.addStringO ption('Xdoclint:none', '-quiet')
+        options.addStringOption('encoding', 'UTF-8')
+        options.addBooleanOption('Xdoclint:none', true)
     }
 
     gradle.projectsEvaluated {
-        tasks.withType(JavaCompile).tap {
-            configureEach {
-                options.compilerArgs << "-Xlint:deprecation"
-                options.compilerArgs << "-Xlint:unchecked"
-            }
+        tasks.withType(JavaCompile).configureEach {
+            options.compilerArgs << "-Xlint:deprecation"
+            options.compilerArgs << "-Xlint:unchecked"
         }
     }
 }
